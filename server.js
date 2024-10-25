@@ -1,14 +1,6 @@
-/* Aperçu rapide de ce qui se passe ici :
-la fonction normalizePort renvoie un port valide, 
+/* la fonction normalizePort renvoie un port valide, 
 qu'il soit fourni sous la forme d'un numéro ou d'une chaîne ;
-
-la fonction errorHandler  recherche les différentes erreurs 
-et les gère de manière appropriée. 
-Elle est ensuite enregistrée dans le serveur ;
-
-un écouteur d'évènements est également enregistré, 
-consignant le port ou le canal nommé sur lequel 
-le serveur s'exécute dans la console. */
+ */
 
 const http = require("http");
 const app = require("./app");
@@ -26,6 +18,10 @@ const normalizePort = (val) => {
 };
 const port = normalizePort(process.env.PORT || "4000");
 app.set("port", port);
+
+/*la fonction errorHandler  recherche les différentes erreurs 
+et les gère de manière appropriée. 
+Elle est ensuite enregistrée dans le serveur*/
 
 const errorHandler = (error) => {
   if (error.syscall !== "listen") {
@@ -48,6 +44,7 @@ const errorHandler = (error) => {
   }
 };
 
+// creation du serveur HTTP
 const server = http.createServer(app);
 
 server.on("error", errorHandler);
@@ -57,4 +54,8 @@ server.on("listening", () => {
   console.log("Listening on " + bind);
 });
 
+/*
+écouteur d'évènements, 
+consignant le port ou le canal nommé sur lequel 
+le serveur s'exécute dans la console */
 server.listen(port);

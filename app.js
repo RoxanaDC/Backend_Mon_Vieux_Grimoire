@@ -1,7 +1,7 @@
 // les imports
 const express = require("express");
 const mongoose = require("mongoose");
-
+const cors = require("cors");
 // pour express.static - les images
 const path = require("path");
 
@@ -20,27 +20,11 @@ mongoose
   .then(() => console.log("BRAVOOOO! >:D< - Connexion à MongoDB réussie !"))
   .catch(() => console.log("UFF .... :( - Connexion à MongoDB échouée !"));
 
-// permets le travail avec JSON dans les requêtes
-app.use(express.json());
+app.use(express.json()); // permets le travail avec JSON dans les requêtes
+app.use(cors()); //CORS
+app.use("/api/books", routesBooks); // les routes de l'application
 
-// CORS
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  next();
-});
-
-// les routes de l'application
-app.use("/api/books", routesBooks);
 app.use("/api/auth", routesUsers);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-// export application
 module.exports = app;

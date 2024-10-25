@@ -28,9 +28,9 @@ exports.login = (req, res, next) => {
           .compare(req.body.password, user.password)
           .then((passwordValide) => {
             if (!passwordValide) {
-              res
-                .status(401)
-                .json({ message: "Paire user/password incorrecte" });
+              res.status(401).json({
+                message: "Paire user/password incorrecte",
+              });
             } else {
               res.status(200).json({
                 userId: user._id,

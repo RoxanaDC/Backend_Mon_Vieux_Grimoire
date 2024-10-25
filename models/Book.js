@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const bookSchema = mongoose.Schema({
-  //userId:{type: String, required: true}, // - identifiant MongoDB unique de l'utilisateur qui a créé le livre
+  userId: { type: String, required: true }, // - identifiant MongoDB unique de l'utilisateur qui a créé le livre
   title: { type: String, required: true }, // - titre du livre
   author: { type: String, required: true }, // - autheur du livre
   imageUrl: { type: String, required: true }, // - illustration/couverture du livre

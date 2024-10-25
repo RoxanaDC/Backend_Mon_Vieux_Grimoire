@@ -3,9 +3,12 @@ const fs = require("fs");
 
 exports.createBook = (req, res, next) => {
   const bookObject = JSON.parse(req.body.book);
-
-  delete bookObject._id;
+  console.log("creez cartea");
+  /*   delete bookObject._id;
   delete bookObject._userId;
+ */
+  delete bookObject.id;
+  delete bookObject.userId;
 
   const book = new Book({
     ...bookObject,
@@ -16,6 +19,7 @@ exports.createBook = (req, res, next) => {
   });
   book
     .save()
+
     .then(() => res.status(201).json({ message: "Livre bien enregistré !" }))
     .catch((error) => res.status(400).json({ error }));
 };
@@ -80,4 +84,65 @@ exports.getOneBook = (req, res, next) => {
   Book.findOne({ _id: req.params.id })
     .then((book) => res.status(200).json(book))
     .catch((error) => res.status(404).json({ error }));
+};
+
+exports.getTop3Books = (req, res, next) => {
+  const sortOrder = -1; // -1 pour une ordre décroissante (1 pour ordre croissante)
+  Book.find()
+    .sort({ averageRating: sortOrder }) // Sorter les livres par moyenne d'évaluation en ordre décroissant
+    .limit(3)
+    .then((top3Books) => {
+      res.status(200).json(top3Books); // Fournit la liste de 3 livres de la DB, qui ont les meilleures évaluations moyennes.
+    })
+    .catch((error) => res.status(500).json({ error }));
+};
+
+// Ajouter une note à un livre
+exports.addRating = (req, res, next) => {
+  const { userId, rating } = req.body;
+
+  // Calculer la nouvelle note moyenne d'un livre
+  const determineAverageRating = (anyBook) => {
+    const totalGrades = anyBook.ratings.reduce(
+      (sum, rating) => sum + rating.grade,
+      0
+    );
+    return totalGrades / anyBook.ratings.length;
+  };
+
+  // Vérifier si la note est entre 0 et 5
+
+  const minRating = 0;
+  const maxRating = 5;
+
+  if (rating < minRating || rating > maxRating) {
+    return res
+      .status(400)
+      .json({ message: "La note doit être comprise entre 0 et 5" });
+  }
+
+  // Chercher le livre dans la base de données
+  Book.findById(req.params.id)
+    .then((foundBook) => {
+      // Vérifier si l'utilisateur a déjà noté le livre
+      const checkIfUserRated = foundBook.ratings.some(
+        (ratingNote) => ratingNote.userId === userId
+      );
+      if (checkIfUserRated) {
+        return res
+          .status(403)
+          .json({ message: "L'utilisateur a déjà noté ce livre" });
+      }
+
+      // Ajouter la nouvelle note et recalculer la note moyenne
+      foundBook.ratings.push({ userId, grade: rating });
+      foundBook.averageRating = determineAverageRating(foundBook);
+
+      // Sauvegarder les changements dans la base de données
+      foundBook
+        .save()
+        .then(() => res.status(200).json(foundBook))
+        .catch((error) => res.status(500).json({ error: error.message }));
+    })
+    .catch((error) => res.status(500).json({ error: error.message }));
 };

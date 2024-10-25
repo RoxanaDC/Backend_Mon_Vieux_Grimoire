@@ -7,9 +7,15 @@ const multer = require("../middleware/multer_config");
 const router = express.Router();
 
 router.post("/", auth, multer, controleursBooks.createBook);
-router.get("/:id", auth, controleursBooks.getOneBook);
-router.get("/", auth, controleursBooks.getAllBooks);
+router.get("/bestrating", controleursBooks.getTop3Books); // auth NO
+router.get("/", controleursBooks.getAllBooks); // auth NO
+
+router.post("/:id/rating", auth, controleursBooks.addRating);
+
+router.get("/:id", controleursBooks.getOneBook); // auth NO
+
 router.put("/:id", auth, multer, controleursBooks.modifyBook);
+
 router.delete("/:id", auth, controleursBooks.deleteBook);
 
 module.exports = router;
