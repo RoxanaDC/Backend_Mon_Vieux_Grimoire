@@ -4,9 +4,6 @@ const fs = require("fs");
 exports.createBook = (req, res, next) => {
   const bookObject = JSON.parse(req.body.book);
   console.log("creez cartea");
-  /*   delete bookObject._id;
-  delete bookObject._userId;
- */
   delete bookObject.id;
   delete bookObject.userId;
 
