@@ -12,9 +12,10 @@ const routesUsers = require("./routes/routes_users");
 const app = express();
 
 //connexion à la base de donneés
+const { MONGO_DB_USER, MONGO_DB_PASSWORD } = process.env;
 mongoose
   .connect(
-    "mongodb+srv://userroxana:123aze@cluster0.1lslq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    `mongodb+srv://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@cluster0.1lslq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("BRAVOOOO! >:D< - Connexion à MongoDB réussie !"))
