@@ -1,6 +1,8 @@
-const bcrypt = require("bcrypt");
-const jsonWebToken = require("jsonwebtoken");
+const bcrypt = require("bcrypt"); // chiffrement de données sensibles
+const jsonWebToken = require("jsonwebtoken"); // création, vérification, définition de la durée de vie des tokens
 const User = require("../models/User");
+require("dotenv").config();
+const { SECRET_TOKEN } = process.env;
 
 exports.signup = (req, res, next) => {
   bcrypt
@@ -34,11 +36,9 @@ exports.login = (req, res, next) => {
             } else {
               res.status(200).json({
                 userId: user._id,
-                token: jsonWebToken.sign(
-                  { userId: user._id },
-                  "RANDOM_SECRET_TOKEN",
-                  { expiresIn: "24h" }
-                ),
+                token: jsonWebToken.sign({ userId: user._id }, SECRET_TOKEN, {
+                  expiresIn: "24h",
+                }),
               });
             }
           })

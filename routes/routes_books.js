@@ -7,12 +7,12 @@ const multerAndSharp = require("../middleware/multer_and_sharp_config");
 const router = express.Router();
 
 router.post("/", auth, multerAndSharp, controleursBooks.createBook);
-router.get("/bestrating", controleursBooks.getTop3Books); // auth NO
-router.get("/", controleursBooks.getAllBooks); // auth NO
+router.get("/bestrating", controleursBooks.getTop3Books);
+router.get("/", controleursBooks.getAllBooks);
 
 router.post("/:id/rating", auth, controleursBooks.addRating);
 
-router.get("/:id", controleursBooks.getOneBook); // auth NO
+router.get("/:id", controleursBooks.getOneBook);
 
 router.put("/:id", auth, multerAndSharp, controleursBooks.modifyBook);
 

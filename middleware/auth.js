@@ -1,4 +1,4 @@
-const jsonWebToken = require("jsonwebtoken");
+const jsonWebToken = require("jsonwebtoken"); // création, vérification, définition de la durée de vie des tokens
 require("dotenv").config();
 
 const { SECRET_TOKEN } = process.env;
