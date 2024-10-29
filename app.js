@@ -1,9 +1,8 @@
-// les imports
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-// pour express.static - les images
-const path = require("path");
+const express = require("express"); // gestion des requêtes et des réponses
+const mongoose = require("mongoose"); // gestion des bases de données MongoDB
+const cors = require("cors"); //partage des ressources
+
+const path = require("path"); // travailler avec les chemins de fichiers et de répertoires
 
 const routesBooks = require("./routes/routes_books");
 const routesUsers = require("./routes/routes_users");
