@@ -1,7 +1,7 @@
-const multer = require("multer");
-const sharp = require("sharp");
-const path = require("path");
-const fs = require("fs");
+const multer = require("multer"); // la gestion du téléchargement de fichiers
+const sharp = require("sharp"); // transformer l'image
+const path = require("path"); // manipulation des chemins de fichiers et de répertoires
+const fs = require("fs"); // interagir avec le système de fichiers du serveur
 
 const MIME_TYPES = {
   "image/jpg": "jpg",

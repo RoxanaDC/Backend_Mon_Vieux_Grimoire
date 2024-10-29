@@ -1,10 +1,8 @@
-// besoin de express enfin de creer un router
-const express = require("express");
+const express = require("express"); // besoin de express enfin de creer un router
 const controleursBooks = require("../controleurs/controleurs_books");
 const auth = require("../middleware/auth");
 const multerAndSharp = require("../middleware/multer_and_sharp_config");
-//le router avec la fonction Router de express
-const router = express.Router();
+const router = express.Router(); //le router avec la fonction Router de express
 
 router.post("/", auth, multerAndSharp, controleursBooks.createBook);
 router.get("/bestrating", controleursBooks.getTop3Books);
