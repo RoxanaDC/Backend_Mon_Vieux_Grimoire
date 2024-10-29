@@ -9,51 +9,41 @@ const MIME_TYPES = {
   "image/png": "png",
 };
 
-// configuration pour multer: save l'image brute dans le dossier "images"
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, "images");
-  },
-  filename: (req, file, callback) => {
-    const name = file.originalname.split(" ").join("_").split(".")[0];
-    const extension = MIME_TYPES[file.mimetype];
-    callback(null, `${name}_${Date.now()}.${extension}`);
-  },
-});
+const storage = multer.memoryStorage(); // storage dans la memoire
 
 const upload = multer({ storage }).single("image");
 
-// le middleware multer pour upload et modification de l'image
+// Middleware pour upload et modifier l'image
 module.exports = (req, res, next) => {
-  upload(req, res, (err) => {
+  upload(req, res, async (err) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!req.file) return next();
 
-    // la construction du nom de l'image .webp
-    const webpFilename = `${req.file.filename.split(".")[0]}.webp`;
-    const outputPath = path.join(__dirname, "..", "images", webpFilename);
+    try {
+      // transformer l'image avec sharp - .webp
+      const webpBuffer = await sharp(req.file.buffer)
+        .resize({ height: 500 })
+        .webp({ quality: 70 })
+        .toBuffer();
 
-    // modifier l'image avec sharp et save le resultat .webp
-    sharp(req.file.path)
-      .resize({ height: 500 })
-      .webp({ quality: 70 })
-      .toFile(outputPath, (error) => {
-        if (error) return res.status(500).json({ error });
+      // construire le nom de l'image .webp
+      const webpFilename = `${
+        req.file.originalname.split(".")[0]
+      }_${Date.now()}.webp`;
+      const outputPath = path.join(__dirname, "..", "images", webpFilename);
 
-        // Supprimer l'image originale .jpg/.png après le save de l'image .webp
-        console.log(req.file.path);
-        fs.unlink(req.file.path, (unlinkError) => {
-          if (unlinkError)
-            console.error(
-              "Erreur à la suppression de l'image originale",
-              unlinkError
-            );
-        });
+      // enregistrer l'image .webp sur le disk
+      await fs.promises.writeFile(outputPath, webpBuffer);
+      console.log("Imaginea .webp a fost salvată cu succes:", outputPath);
 
-        // L'actualisation du `req.file` avec les infos de l'image .webp
-        req.file.filename = webpFilename;
-        req.file.path = outputPath;
-        next();
-      });
+      // Actualisation  `req.file` avec les infos sur l'image .webp
+      req.file.filename = webpFilename;
+      req.file.path = outputPath;
+
+      next();
+    } catch (error) {
+      console.error("Eroare la procesarea imaginii:", error);
+      res.status(500).json({ error: "Eroare la procesarea imaginii." });
+    }
   });
 };
